@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +10,9 @@
     <h1>Welcome, {{ session('user_name') }}</h1>
     <p>Your role: {{ session('role') }}</p>
 
-    <a href="/logout"><button>Logout</button></a>
+    <!-- Book Now button -->
+    <a href="/rooms"><button>Book Now</button></a>
 </body>
 </html>
+@endsection
+
