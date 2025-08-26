@@ -13,6 +13,10 @@ return new class extends Migration {
                 $table->integer('room_number')->unique();
                 $table->enum('status', ['vacant', 'occupied'])->default('vacant');
                 $table->string('classification');
+                $table->decimal('price', 10, 2);
+                $table->string('capacity', 100);
+                $table->text('amenities')->nullable();
+                $table->string('image')->nullable();
                 $table->text('description');
                 $table->timestamps();
             });

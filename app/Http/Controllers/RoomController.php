@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use App\Models\Booking; // Import Booking model
+use App\Models\User;
+
 
 class RoomController extends Controller
 {
@@ -30,45 +32,59 @@ class RoomController extends Controller
     {
         $room = Room::findOrFail($id);
 
-        if($room->status === 'occupied') {
+        if ($room->status === 'occupied') {
             return redirect()->route('rooms.index')->with('error', 'Room is already occupied.');
         }
 
-        // ✅ Check kung naka-login
-        $user = auth()->user();
-        if(!$user) {
+        // ✅ Check kung naka-login gamit session
+        if (!session()->has('user_id')) {
             return redirect()->route('login')->with('error', 'Please login to book a room.');
         }
-        
+
+        // ✅ Fetch full user model instead of just ID
+        $user = User::find(session('user_id'));
+
         return view('rooms.book', compact('room', 'user'));
     }
 
     // Store booking
-    public function storeBooking(Request $request, $id)
-    {
-        $request->validate([
-            'check_in_time' => 'required',
-            'payment_mode' => 'required',
-        ]);
+    public function storeBooking(Request $request, $roomId)
+{
+    try {
+        $room = Room::findOrFail($roomId);
 
-        $room = Room::findOrFail($id);
+        // 🔑 Kunin user mula sa session (adjust depende sa login mo)
+        $userId = session('user_id'); 
+        $user = User::find($userId);
 
-        if($room->status === 'occupied') {
-            return redirect()->route('rooms.index')->with('error', 'Room already occupied!');
+        if (!$user) {
+            return redirect()->route('rooms.index')->with('error', 'You must be logged in to book.');
         }
 
-        // Update room status
-        $room->update(['status' => 'occupied']);
-
-        // Create booking record
-        auth()->user()->bookings()->create([
-            'room_id' => $room->id,
-            'check_in_date' => now()->toDateString(),
-            'check_in_time' => $request->check_in_time,
-            'payment_mode' => $request->payment_mode,
-            'status' => 'Active',
+        // 1️⃣ Create booking record
+        $booking = $user->bookings()->create([
+            'room_id'        => $room->id,
+            'check_in_date'  => $request->check_in_date,
+            'check_out_date' => $request->check_out_date,
+            'check_in_time'  => $request->check_in_time,
+            'payment_mode'   => $request->payment_mode,
+            'payment_option' => $request->payment_option,
+            'notes'          => $request->notes,
+            'user_id'        => $user->id,
         ]);
 
-        return redirect()->route('rooms.index')->with('success', "Room {$room->room_number} booked successfully!");
+        // 2️⃣ Update room status kung successful ang booking
+        if ($booking) {
+            $room->update(['status' => 'occupied']);
+        }
+
+        return redirect()->route('rooms.index')
+            ->with('success', "Room {$room->room_number} booked successfully!");
+
+    } catch (\Exception $e) {
+        return back()->with('error', 'Booking failed: ' . $e->getMessage());
     }
+}
+
+
 }

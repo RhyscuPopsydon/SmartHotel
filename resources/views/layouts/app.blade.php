@@ -19,5 +19,17 @@
     <div class="container">
         @yield('content')
     </div>
+    
+    @if(session('success'))
+    <div style="background:#d4edda;color:#155724;padding:10px;border-radius:5px;margin-bottom:10px;">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div style="background:#f8d7da;color:#721c24;padding:10px;border-radius:5px;margin-bottom:10px;">
+        {{ session('error') }}
+    </div>
+@endif
 </body>
 </html>

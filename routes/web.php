@@ -9,9 +9,12 @@ use App\Http\Controllers\RoomController;
 // Include helper
 require_once __DIR__ . '/../app/Helpers/AuthHelper.php';
 
-//for booking na to
+// Booking form (GET)
 Route::get('/rooms/{room}/book', [RoomController::class, 'showBooking'])->name('rooms.showBooking');
+
+// Store booking (POST)
 Route::post('/rooms/{room}/book', [RoomController::class, 'storeBooking'])->name('rooms.storeBooking');
+
 
 // Auth
 Route::get('/signup', function() {
