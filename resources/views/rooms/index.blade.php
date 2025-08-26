@@ -570,10 +570,24 @@
                          data-capacity="{{ $room->capacity ?? '' }}"
                          data-amenities="{{ $room->amenities ?? '' }}"
                          data-images="{{ $room->images ?? '[]' }}">
-                         <!-- Use the first image as the thumbnail or a default -->
                          @php
+                            // Process room images
                             $images = json_decode($room->images ?? '[]', true);
-                            $firstImage = count($images) > 0 ? $images[0] : 'https://placehold.co/600x400/1e3a5f/CCD3DB?text=Room+' . $room->room_number;
+                            // If no images exist, use classification-based default images
+                            if (empty($images) || !is_array($images)) {
+                                $classification = strtolower($room->classification);
+                                if (strpos($classification, 'suite') !== false) {
+                                    $firstImage = 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80';
+                                } elseif (strpos($classification, 'deluxe') !== false) {
+                                    $firstImage = 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80';
+                                } elseif (strpos($classification, 'double') !== false) {
+                                    $firstImage = 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80';
+                                } else {
+                                    $firstImage = 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80';
+                                }
+                            } else {
+                                $firstImage = $images[0];
+                            }
                          @endphp
                         <img src="{{ $firstImage }}" alt="Room {{ $room->room_number }}" class="room-image">
                         <div class="room-number">Room {{ $room->room_number }}</div>
@@ -600,10 +614,24 @@
                          data-capacity="{{ $room->capacity ?? '' }}"
                          data-amenities="{{ $room->amenities ?? '' }}"
                          data-images="{{ $room->images ?? '[]' }}">
-                         <!-- Use the first image as the thumbnail or a default -->
                          @php
+                            // Process room images
                             $images = json_decode($room->images ?? '[]', true);
-                            $firstImage = count($images) > 0 ? $images[0] : 'https://placehold.co/600x400/1e3a5f/CCD3DB?text=Room+' . $room->room_number;
+                            // If no images exist, use classification-based default images
+                            if (empty($images) || !is_array($images)) {
+                                $classification = strtolower($room->classification);
+                                if (strpos($classification, 'suite') !== false) {
+                                    $firstImage = 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80';
+                                } elseif (strpos($classification, 'deluxe') !== false) {
+                                    $firstImage = 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80';
+                                } elseif (strpos($classification, 'double') !== false) {
+                                    $firstImage = 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80';
+                                } else {
+                                    $firstImage = 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80';
+                                }
+                            } else {
+                                $firstImage = $images[0];
+                            }
                          @endphp
                         <img src="{{ $firstImage }}" alt="Room {{ $room->room_number }}" class="room-image">
                         <div class="room-number">Room {{ $room->room_number }}</div>
@@ -722,7 +750,7 @@
             
             // If no images, use a placeholder
             if (images.length === 0) {
-                images = ['https://placehold.co/600x400/1e3a5f/CCD3DB?text=No+Image+Available'];
+                images = ['https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'];
             }
             
             // Create slides, dots, and thumbnails
@@ -824,19 +852,38 @@
                 try {
                     images = JSON.parse(this.dataset.images);
                     if (!Array.isArray(images) || images.length === 0) {
-                        images = [`https://placehold.co/600x400/1e3a5f/CCD3DB?text=Room+${this.dataset.roomNumber}`];
+                        // If no images, use classification-based defaults
+                        const classification = this.dataset.classification.toLowerCase();
+                        if (classification.includes('suite')) {
+                            images = [
+                                'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+                                'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+                                'https://images.unsplash.com/photo-1564078516393-cf04bd966897?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+                            ];
+                        } else if (classification.includes('deluxe')) {
+                            images = [
+                                'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+                                'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+                                'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+                            ];
+                        } else if (classification.includes('double')) {
+                            images = [
+                                'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+                                'https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+                                'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+                            ];
+                        } else {
+                            images = [
+                                'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+                                'https://images.unsplash.com/photo-1576359870757-5d4556e3a8f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+                                'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+                            ];
+                        }
                     }
                 } catch (e) {
                     console.error('Error parsing images:', e);
-                    images = [`https://placehold.co/600x400/1e3a5f/CCD3DB?text=Room+${this.dataset.roomNumber}`];
+                    images = ['https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'];
                 }
-                
-                // Ensure we have exactly 3 images (duplicate if needed)
-                while (images.length < 3) {
-                    images = images.concat(images);
-                }
-                // Take only the first 3 images
-                images = images.slice(0, 3);
                 
                 initSlideshow(images);
 
@@ -924,3 +971,5 @@
     </script>
 </body>
 </html>
+
+
