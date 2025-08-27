@@ -69,8 +69,6 @@ class RoomController extends Controller
             'check_in_date'  => $request->check_in_date,
             'check_out_date' => $request->check_out_date,
             'check_in_time'  => $request->check_in_time,
-            'payment_mode'   => $request->payment_mode,
-            'payment_option' => $request->payment_option,
             'notes'          => $request->notes,
             'user_id'        => $user->id,
         ]);

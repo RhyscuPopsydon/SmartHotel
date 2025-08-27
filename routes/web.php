@@ -49,3 +49,10 @@ Route::get('/', function () {
 //Room
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::post('/rooms/toggle/{id}', [RoomController::class, 'toggleStatus'])->name('rooms.toggle');
+
+
+// web.php
+Route::prefix('receptionist')->middleware('auth')->group(function () {
+    Route::get('bookings', [ReceptionistController::class, 'index'])->name('receptionist.bookings');
+    Route::post('bookings/{booking}', [ReceptionistController::class, 'updateStatus'])->name('receptionist.updateStatus');
+});
