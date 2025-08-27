@@ -47,6 +47,8 @@ class RoomController extends Controller
         return view('rooms.book', compact('room', 'user'));
     }
 
+
+
     // Store booking
     public function storeBooking(Request $request, $roomId)
 {
