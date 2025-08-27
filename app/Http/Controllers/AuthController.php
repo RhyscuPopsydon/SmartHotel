@@ -51,7 +51,16 @@ class AuthController extends Controller
             Session::put('user_name', $user->name);
             Session::put('role', $user->role);
 
-            return redirect('/dashboard');
+            // Redirect based on role
+            if ($user->role === 'guest') {
+                return redirect()->route('rooms.index');
+            } elseif ($user->role === 'receptionist') {
+                return redirect()->route('receptionist.index');
+            } elseif ($user->role === 'admin') {
+                return redirect()->route('dashboard'); // or admin dashboard later
+            }
+
+            return redirect()->route('dashboard');
         }
 
         return back()->with('error', 'Invalid email or password.');
