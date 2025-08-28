@@ -944,7 +944,7 @@ document.querySelectorAll('.room-card').forEach(card => {
         document.getElementById('modalRoomTitle').textContent = `Room ${this.dataset.roomNumber}`;
         document.getElementById('modalClassification').textContent = this.dataset.classification;
         document.getElementById('modalCapacity').textContent = `${this.dataset.capacity} Guests`;
-        document.getElementById('modalPrice').textContent = `$${parseFloat(this.dataset.price).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        document.getElementById('modalPrice').textContent = `₱${parseFloat(this.dataset.price).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
 
         // **Use data-images if available, otherwise default by classification**
         let images = [];

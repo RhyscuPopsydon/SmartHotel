@@ -384,7 +384,7 @@
                 <div class="card-body">
                     <p>Discover our luxurious locations around the world</p>
                     <div class="branch-location">
-                        <h3>New York City</h3>
+                        <h3>Caloocan City</h3>
                         <div class="feature">
                             <i class="fas fa-map-pin"></i>
                             <span>5th Avenue, Manhattan</span>
@@ -395,14 +395,14 @@
                         </div>
                     </div>
                     <div class="branch-location">
-                        <h3>Paris</h3>
+                        <h3>Quezon City</h3>
                         <div class="feature">
                             <i class="fas fa-map-pin"></i>
-                            <span>Champs-Élysées</span>
+                            <span>East Avenue</span>
                         </div>
                         <div class="feature">
                             <i class="fas fa-phone"></i>
-                            <span>+33 1 42 86 13 57</span>
+                            <span>09122334456</span>
                         </div>
                     </div>
                     <a href="/branches" class="view-more">View all 12 locations →</a>

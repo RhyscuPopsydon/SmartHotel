@@ -538,7 +538,7 @@
             <div class="stat-card">
                 <i class="fas fa-users"></i>
                 <div class="stat-number">89</div>
-                <div class="stat-label">Current Guests</div>
+                <div class="stat-label">Active Guests</div>
             </div>
             <div class="stat-card">
                 <i class="fas fa-door-open"></i>
