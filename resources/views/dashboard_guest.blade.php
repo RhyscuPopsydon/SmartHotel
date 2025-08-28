@@ -472,7 +472,7 @@
                 <a href="#"><i class="fab fa-linkedin-in"></i></a>
             </div>
             <div class="copyright">
-                &copy; 2023 Grandeur Suites. All rights reserved.
+                &copy; 2025 Smart Hotel. All rights reserved.
             </div>
         </div>
     </footer>

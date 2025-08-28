@@ -550,7 +550,7 @@
     <div class="container">
         <header>
             <div class="hotel-logo">
-                <i class="fas fa-hotel"></i> GRAND OCEAN HOTEL
+                <i class="fas fa-hotel"></i> Smart Hotel
             </div>
             <h1>Hotel Room Blueprint</h1>
             <p class="subtitle">Click on any room to view details and make a reservation</p>
