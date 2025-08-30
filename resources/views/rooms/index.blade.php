@@ -30,6 +30,19 @@
             padding: 20px 0;
             margin-bottom: 30px;
         }
+        .btn-back {
+            display: inline-block;
+            background: #2d3748;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .btn-back:hover {
+            background: #4a5568;
+        }
         
         h1 {
             font-size: 2.5rem;
@@ -554,6 +567,13 @@
             </div>
             <h1>Hotel Room Blueprint</h1>
             <p class="subtitle">Click on any room to view details and make a reservation</p>
+
+            {{-- Back Button --}}
+            <div style="margin-top: 15px;">
+                <a href="{{ route('dashboard') }}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
         </header>
 
         {{-- Floor 1 --}}
@@ -864,186 +884,185 @@
     </div>
 
     <script>
-const modal = document.getElementById('roomModal');
-const closeModalBtn = document.getElementById('closeModal');
-const cancelBtn = document.getElementById('cancelBtn');
-const bookBtn = document.getElementById('bookBtn');
-const slideshowContainer = document.getElementById('slideshowContainer');
-const slideshowDots = document.getElementById('slideshowDots');
-const thumbnailContainer = document.getElementById('thumbnailContainer');
-const prevSlideBtn = document.getElementById('prevSlide');
-const nextSlideBtn = document.getElementById('nextSlide');
+    const modal = document.getElementById('roomModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const bookBtn = document.getElementById('bookBtn');
+    const slideshowContainer = document.getElementById('slideshowContainer');
+    const slideshowDots = document.getElementById('slideshowDots');
+    const thumbnailContainer = document.getElementById('thumbnailContainer');
+    const prevSlideBtn = document.getElementById('prevSlide');
+    const nextSlideBtn = document.getElementById('nextSlide');
 
-let currentSlideIndex = 0;
-let slideshowImages = [];
-let slideshowInterval;
+    let currentSlideIndex = 0;
+    let slideshowImages = [];
+    let slideshowInterval;
 
-function initSlideshow(images) {
-    slideshowContainer.innerHTML = '';
-    slideshowDots.innerHTML = '';
-    thumbnailContainer.innerHTML = '';
-    if (slideshowInterval) clearInterval(slideshowInterval);
-
-    if (images.length === 0) {
-        images = ['https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80'];
-    }
-
-    images.forEach((image, index) => {
-        const slide = document.createElement('img');
-        slide.src = image;
-        slide.alt = `Room image ${index + 1}`;
-        slide.className = 'slide';
-        if (index === 0) slide.classList.add('active');
-        slideshowContainer.appendChild(slide);
-
-        const dot = document.createElement('div');
-        dot.className = 'slideshow-dot';
-        if (index === 0) dot.classList.add('active');
-        dot.dataset.index = index;
-        dot.addEventListener('click', () => goToSlide(index));
-        slideshowDots.appendChild(dot);
-
-        const thumbnail = document.createElement('img');
-        thumbnail.src = image;
-        thumbnail.alt = `Thumbnail ${index + 1}`;
-        thumbnail.className = 'thumbnail';
-        if (index === 0) thumbnail.classList.add('active');
-        thumbnail.dataset.index = index;
-        thumbnail.addEventListener('click', () => goToSlide(index));
-        thumbnailContainer.appendChild(thumbnail);
-    });
-
-    currentSlideIndex = 0;
-    slideshowImages = images;
-
-    if (images.length > 1) {
-        slideshowInterval = setInterval(nextSlide, 5000);
-    }
-}
-
-function goToSlide(index) {
-    document.querySelectorAll('.slide').forEach((slide, i) => slide.classList.toggle('active', i === index));
-    document.querySelectorAll('.slideshow-dot').forEach((dot, i) => dot.classList.toggle('active', i === index));
-    document.querySelectorAll('.thumbnail').forEach((thumb, i) => thumb.classList.toggle('active', i === index));
-    currentSlideIndex = index;
-
-    if (slideshowInterval) {
-        clearInterval(slideshowInterval);
-        if (slideshowImages.length > 1) slideshowInterval = setInterval(nextSlide, 5000);
-    }
-}
-
-function nextSlide() { goToSlide((currentSlideIndex + 1) % slideshowImages.length); }
-function prevSlide() { goToSlide((currentSlideIndex - 1 + slideshowImages.length) % slideshowImages.length); }
-
-prevSlideBtn.addEventListener('click', prevSlide);
-nextSlideBtn.addEventListener('click', nextSlide);
-
-document.querySelectorAll('.room-card').forEach(card => {
-    card.addEventListener('click', function() {
-        document.getElementById('modalRoomTitle').textContent = `Room ${this.dataset.roomNumber}`;
-        document.getElementById('modalClassification').textContent = this.dataset.classification;
-        document.getElementById('modalCapacity').textContent = `${this.dataset.capacity} Guests`;
-        document.getElementById('modalPrice').textContent = `₱${parseFloat(this.dataset.price).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-
-        // **Use data-images if available, otherwise default by classification**
-        let images = [];
-        try {
-            images = JSON.parse(this.dataset.images) || [];
-        } catch {
-            images = [];
-        }
+    function initSlideshow(images) {
+        slideshowContainer.innerHTML = '';
+        slideshowDots.innerHTML = '';
+        thumbnailContainer.innerHTML = '';
+        if (slideshowInterval) clearInterval(slideshowInterval);
 
         if (images.length === 0) {
-            const cls = this.dataset.classification.toLowerCase();
-            if (cls.includes('suite')) images = [
-                'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1564078516393-cf04bd966897?auto=format&fit=crop&w=600&q=80'
-            ];
-            else if (cls.includes('deluxe')) images = [
-                'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=600&q=80'
-            ];
-            else if (cls.includes('double')) images = [
-                'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?auto=format&fit=crop&w=600&q=80'
-            ];
-            else images = [
-                'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1576359870757-5d4556e3a8f8?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=600&q=80'
-            ];
+            images = ['https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80'];
         }
 
-        initSlideshow(images);
+        images.forEach((image, index) => {
+            const slide = document.createElement('img');
+            slide.src = image;
+            slide.alt = `Room image ${index + 1}`;
+            slide.className = 'slide';
+            if (index === 0) slide.classList.add('active');
+            slideshowContainer.appendChild(slide);
 
-        const statusBadge = document.getElementById('modalStatusBadge');
-        statusBadge.textContent = this.dataset.status.toUpperCase();
-        statusBadge.className = 'room-status-badge';
-        if (this.dataset.status === 'occupied') {
-            statusBadge.classList.add('status-occupied');
-            statusBadge.innerHTML = '<i class="fas fa-times-circle"></i> ' + statusBadge.textContent;
-        } else {
-            statusBadge.classList.add('status-vacant');
-            statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> ' + statusBadge.textContent;
-        }
+            const dot = document.createElement('div');
+            dot.className = 'slideshow-dot';
+            if (index === 0) dot.classList.add('active');
+            dot.dataset.index = index;
+            dot.addEventListener('click', () => goToSlide(index));
+            slideshowDots.appendChild(dot);
 
-        const amenitiesContainer = document.getElementById('modalAmenities');
-        amenitiesContainer.innerHTML = '';
-        ['Free WiFi', 'Air Conditioning', 'TV', 'Safe'].forEach(a => {
-            const div = document.createElement('div');
-            div.className = 'amenity';
-            div.innerHTML = `<i class="fas fa-check"></i> ${a}`;
-            amenitiesContainer.appendChild(div);
+            const thumbnail = document.createElement('img');
+            thumbnail.src = image;
+            thumbnail.alt = `Thumbnail ${index + 1}`;
+            thumbnail.className = 'thumbnail';
+            if (index === 0) thumbnail.classList.add('active');
+            thumbnail.dataset.index = index;
+            thumbnail.addEventListener('click', () => goToSlide(index));
+            thumbnailContainer.appendChild(thumbnail);
         });
-        if (this.dataset.amenities) {
-            this.dataset.amenities.split(',').forEach(a => {
-                if (a.trim() !== '') {
-                    const div = document.createElement('div');
-                    div.className = 'amenity';
-                    div.innerHTML = `<i class="fas fa-check"></i> ${a.trim()}`;
-                    amenitiesContainer.appendChild(div);
-                }
-            });
-        }
 
-        modal.style.display = 'flex';
+        currentSlideIndex = 0;
+        slideshowImages = images;
 
-        // Assign roomId to Book button
-        bookBtn.dataset.roomId = this.dataset.roomId;
-
-        if (this.dataset.status === 'occupied') {
-            bookBtn.disabled = true;
-            bookBtn.innerHTML = '<i class="fas fa-times"></i> Not Available';
-        } else {
-            bookBtn.disabled = false;
-            bookBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Book Now';
-        }
-    });
-});
-
-function closeModal() {
-    modal.style.display = 'none';
-    if (slideshowInterval) clearInterval(slideshowInterval);
-}
-
-closeModalBtn.addEventListener('click', closeModal);
-cancelBtn.addEventListener('click', closeModal);
-window.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-
-bookBtn.addEventListener('click', function() {
-    if (!this.disabled) {
-        const roomId = this.dataset.roomId;
-        if (roomId) {
-            window.location.href = "{{ url('rooms') }}/" + roomId + "/book";
+        if (images.length > 1) {
+            slideshowInterval = setInterval(nextSlide, 5000);
         }
     }
-});
-</script>
 
+    function goToSlide(index) {
+        document.querySelectorAll('.slide').forEach((slide, i) => slide.classList.toggle('active', i === index));
+        document.querySelectorAll('.slideshow-dot').forEach((dot, i) => dot.classList.toggle('active', i === index));
+        document.querySelectorAll('.thumbnail').forEach((thumb, i) => thumb.classList.toggle('active', i === index));
+        currentSlideIndex = index;
+
+        if (slideshowInterval) {
+            clearInterval(slideshowInterval);
+            if (slideshowImages.length > 1) slideshowInterval = setInterval(nextSlide, 5000);
+        }
+    }
+
+    function nextSlide() { goToSlide((currentSlideIndex + 1) % slideshowImages.length); }
+    function prevSlide() { goToSlide((currentSlideIndex - 1 + slideshowImages.length) % slideshowImages.length); }
+
+    prevSlideBtn.addEventListener('click', prevSlide);
+    nextSlideBtn.addEventListener('click', nextSlide);
+
+    document.querySelectorAll('.room-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.getElementById('modalRoomTitle').textContent = `Room ${this.dataset.roomNumber}`;
+            document.getElementById('modalClassification').textContent = this.dataset.classification;
+            document.getElementById('modalCapacity').textContent = `${this.dataset.capacity} Guests`;
+            document.getElementById('modalPrice').textContent = `₱${parseFloat(this.dataset.price).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
+            // **Use data-images if available, otherwise default by classification**
+            let images = [];
+            try {
+                images = JSON.parse(this.dataset.images) || [];
+            } catch {
+                images = [];
+            }
+
+            if (images.length === 0) {
+                const cls = this.dataset.classification.toLowerCase();
+                if (cls.includes('suite')) images = [
+                    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1564078516393-cf04bd966897?auto=format&fit=crop&w=600&q=80'
+                ];
+                else if (cls.includes('deluxe')) images = [
+                    'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=600&q=80'
+                ];
+                else if (cls.includes('double')) images = [
+                    'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?auto=format&fit=crop&w=600&q=80'
+                ];
+                else images = [
+                    'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1576359870757-5d4556e3a8f8?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=600&q=80'
+                ];
+            }
+
+            initSlideshow(images);
+
+            const statusBadge = document.getElementById('modalStatusBadge');
+            statusBadge.textContent = this.dataset.status.toUpperCase();
+            statusBadge.className = 'room-status-badge';
+            if (this.dataset.status === 'occupied') {
+                statusBadge.classList.add('status-occupied');
+                statusBadge.innerHTML = '<i class="fas fa-times-circle"></i> ' + statusBadge.textContent;
+            } else {
+                statusBadge.classList.add('status-vacant');
+                statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> ' + statusBadge.textContent;
+            }
+
+            const amenitiesContainer = document.getElementById('modalAmenities');
+            amenitiesContainer.innerHTML = '';
+            ['Free WiFi', 'Air Conditioning', 'TV', 'Safe'].forEach(a => {
+                const div = document.createElement('div');
+                div.className = 'amenity';
+                div.innerHTML = `<i class="fas fa-check"></i> ${a}`;
+                amenitiesContainer.appendChild(div);
+            });
+            if (this.dataset.amenities) {
+                this.dataset.amenities.split(',').forEach(a => {
+                    if (a.trim() !== '') {
+                        const div = document.createElement('div');
+                        div.className = 'amenity';
+                        div.innerHTML = `<i class="fas fa-check"></i> ${a.trim()}`;
+                        amenitiesContainer.appendChild(div);
+                    }
+                });
+            }
+
+            modal.style.display = 'flex';
+
+            // Assign roomId to Book button
+            bookBtn.dataset.roomId = this.dataset.roomId;
+
+            if (this.dataset.status === 'occupied') {
+                bookBtn.disabled = true;
+                bookBtn.innerHTML = '<i class="fas fa-times"></i> Not Available';
+            } else {
+                bookBtn.disabled = false;
+                bookBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Book Now';
+            }
+        });
+    });
+
+    function closeModal() {
+        modal.style.display = 'none';
+        if (slideshowInterval) clearInterval(slideshowInterval);
+    }
+
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    window.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    bookBtn.addEventListener('click', function() {
+        if (!this.disabled) {
+            const roomId = this.dataset.roomId;
+            if (roomId) {
+                window.location.href = "{{ url('rooms') }}/" + roomId + "/book";
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
